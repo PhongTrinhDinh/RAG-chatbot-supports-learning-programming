@@ -56,7 +56,7 @@ class MarkdownTransformer:
         soup = BeautifulSoup(html, "html.parser")
         
         # remove noise tag
-        for tag in soup(["scripts", "style", "noscript", "iframe", "svg"]):
+        for tag in soup(["script", "style", "noscript", "iframe", "svg"]):
             tag.decompose()
             
         cleaned_html = str(soup)
