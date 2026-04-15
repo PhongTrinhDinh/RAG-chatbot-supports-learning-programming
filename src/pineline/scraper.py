@@ -1,10 +1,10 @@
 from bs4 import BeautifulSoup
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 import httpx
 from typing import Any
 from playwright.sync_api import sync_playwright, Page
 
-class BaseScraper:
+class BaseScraper(ABC):
     @abstractmethod
     def fetch(self, url: str) -> Any:
         pass
@@ -69,7 +69,7 @@ class DynamicScraper(BaseScraper):
 
     def extract(self, page: Page):
         # Extract text content from the page
-        return page.content()
+        return page.inner_text("body")
 
     def scrape(self, url: str):
         try:
@@ -130,16 +130,3 @@ class ScraperFactory:
         if page_type == "dynamic":
             return DynamicScraper()
         return StaticScraper()
-    
-if __name__ == "__main__":
-    url = "https://www.geeksforgeeks.org/dsa/dsa-tutorial-learn-data-structures-and-algorithms/"
-    scraper = ScraperFactory.get_scraper(url)
-    result = scraper.scrape(url)
-
-    print(type(scraper).__name__)
-    if result:
-        print(f"Scraping successful! Content length: {len(result)} characters")
-        # Print first 500 characters to avoid console encoding issues
-        print(f"Preview: {result[:500]}...")
-    else:
-        print("Scraping failed - no content returned")
